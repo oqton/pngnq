@@ -29,6 +29,15 @@
 
   ---------------------------------------------------------------------------*/
 
+#ifndef PNGNQ_RWPNG_H
+#define PNGNQ_RWPNG_H
+
+#include <png.h>
+
+#if defined(PNG_LIBPNG_VER_MINOR) && PNG_LIBPNG_VER_MINOR >= 5
+#  include <zlib.h>
+#endif
+
 #ifndef TRUE
 #  define TRUE 1
 #  define FALSE 0
@@ -65,9 +74,15 @@ typedef struct _rwpng_color_struct {
 
 typedef struct _mainprog_info {
     double gamma;
+#if defined(PNG_LIBPNG_VER_MINOR) && PNG_LIBPNG_VER_MINOR >= 5
+    png_uint_32 width;			/* read/write */
+    png_uint_32 height;			/* read/write */
+    png_uint_32 rowbytes;		/* read */
+#else
     ulg width;			/* read/write */
     ulg height;			/* read/write */
     ulg rowbytes;		/* read */
+#endif
     void *png_ptr;		/* read/write */
     void *info_ptr;		/* read/write */
     rwpng_color palette[256];	/* write */
@@ -111,3 +126,5 @@ int rwpng_write_image_whole(mainprog_info *mainprog_ptr);
 int rwpng_write_image_row(mainprog_info *mainprog_ptr);
 
 int rwpng_write_image_finish(mainprog_info *mainprog_ptr);
+
+#endif // PNGNQ_RWPNG_H
